@@ -1,0 +1,4 @@
+node_modules
+giziku.pem
+.env
+.prod.env
