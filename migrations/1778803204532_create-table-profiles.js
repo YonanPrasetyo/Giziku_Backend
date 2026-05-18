@@ -9,29 +9,45 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createTable('users', {
+  pgm.createTable('profiles', {
     id: {
       type: 'SERIAL',
       primaryKey: true,
     },
-    username: {
-      type: 'VARCHAR(50)',
+    user_id: {
+      type: 'INTEGER',
       notNull: true,
-      unique: true,
+      references: '"users"',
+      onDelete: 'CASCADE',
     },
-    email: {
+    name: {
       type: 'VARCHAR(100)',
       notNull: true,
-      unique: true,
     },
-    password: {
-      type: 'TEXT',
+    date_of_birth: {
+      type: 'DATE',
+    },
+    weight: {
+      type: 'REAL',
+    },
+    height: {
+      type: 'REAL',
+    },
+    gender: {
+      type: 'VARCHAR(1)',
+    },
+    relation: {
+      type: 'VARCHAR(50)',
       notNull: true,
     },
     created_at: {
       type: 'TIMESTAMP',
       notNull: true,
     },
+  });
+
+  pgm.addConstraint('profiles', 'profiles_gender_check', {
+    check: "gender IN ('M', 'F') OR gender IS NULL",
   });
 };
 
@@ -41,5 +57,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('users');
+  pgm.dropTable('profiles');
 };

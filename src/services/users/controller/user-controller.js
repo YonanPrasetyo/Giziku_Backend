@@ -1,27 +1,14 @@
 import UserRepositories from '../repositories/user-repositories.js';
 import response from '../../../utils/response.js';
-import InvariantError from '../../../exceptions/invariant-error.js';
 import NotFoundError from '../../../exceptions/not-found-error.js';
+import UserService from '../services/user-service.js';
 
 export const createUser = async (req, res, next) => {
-  const { username, password, fullname } = req.validated;
+  const { email, username, password } = req.validated;
 
-  const isUsernameExist = await UserRepositories.verifyNewUsername(username);
-  if (isUsernameExist) {
-    return next(new InvariantError('Gagal menambahkan user. Username sudah digunakan.'));
-  }
+  const result = await UserService.register({ email, username, password });
 
-  const user = await UserRepositories.createUser({
-    username,
-    password,
-    fullname,
-  });
-
-  if (!user) {
-    return next(new InvariantError('User gagal ditambahkan'));
-  }
-
-  return response(res, 201, 'User berhasil ditambahkan', user);
+  return response(res, 201, 'User berhasil ditambahkan', result.user);
 };
 
 export const getUserById = async (req, res, next) => {
@@ -32,5 +19,5 @@ export const getUserById = async (req, res, next) => {
     return next(new NotFoundError('User tidak ditemukan'));
   }
 
-  return response(res, 200, 'User berhasil ditampilkan', { id: user.id, username: user.username, fullname: user.fullname, updated_at: user.updated_at, created_at: user.created_at });
+  return response(res, 200, 'User berhasil ditampilkan', { id: user.id, email: user.email, username: user.username, updated_at: user.updated_at, created_at: user.created_at });
 };

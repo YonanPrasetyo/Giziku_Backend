@@ -6,10 +6,8 @@ import InvariantError from '../../../exceptions/invariant-error.js';
 import AuthenticationError from '../../../exceptions/authentication-error.js';
 
 export const login = async (req, res, next) => {
-  console.log('req.body', req.body);
-  console.log('req.validated', req.validated);
-  const { username, password } = req.validated;
-  const userId = await AuthenticationRepositories.verifyUserCredential(username, password);
+  const { email, password } = req.validated;
+  const userId = await AuthenticationRepositories.verifyUserCredential(email, password);
 
   if (!userId) {
     return next(new AuthenticationError('Kredensial yang Anda berikan salah'));

@@ -8,29 +8,24 @@ export const shorthands = undefined;
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
+
 export const up = (pgm) => {
-  pgm.createTable('users', {
+  pgm.createTable('foods', {
     id: {
       type: 'SERIAL',
       primaryKey: true,
     },
-    username: {
-      type: 'VARCHAR(50)',
+    profile_id: {
+      type: 'integer',
       notNull: true,
-      unique: true,
+      references: 'profiles',
+      onDelete: 'cascade',
     },
-    email: {
-      type: 'VARCHAR(100)',
-      notNull: true,
-      unique: true,
+    image_url: {
+      type: 'varchar',
     },
-    password: {
-      type: 'TEXT',
-      notNull: true,
-    },
-    created_at: {
-      type: 'TIMESTAMP',
-      notNull: true,
+    analyzed_at: {
+      type: 'timestamp',
     },
   });
 };
@@ -41,5 +36,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('users');
+  pgm.dropTable('foods');
 };

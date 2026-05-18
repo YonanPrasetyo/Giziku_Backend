@@ -8,29 +8,37 @@ export const shorthands = undefined;
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
+
 export const up = (pgm) => {
-  pgm.createTable('users', {
+  pgm.createTable('nutrition_results', {
     id: {
       type: 'SERIAL',
       primaryKey: true,
+      autoIncrement: true,
     },
-    username: {
-      type: 'VARCHAR(50)',
+    food_id: {
+      type: 'integer',
       notNull: true,
-      unique: true,
+      references: 'foods',
+      onDelete: 'cascade',
     },
-    email: {
-      type: 'VARCHAR(100)',
-      notNull: true,
-      unique: true,
+    name: {
+      type: 'varchar',
     },
-    password: {
-      type: 'TEXT',
-      notNull: true,
+    energy: {
+      type: 'float',
     },
-    created_at: {
-      type: 'TIMESTAMP',
-      notNull: true,
+    protein: {
+      type: 'float',
+    },
+    fat: {
+      type: 'float',
+    },
+    carbohydrate: {
+      type: 'float',
+    },
+    sugar: {
+      type: 'float',
     },
   });
 };
@@ -41,5 +49,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('users');
+  pgm.dropTable('nutrition_results');
 };

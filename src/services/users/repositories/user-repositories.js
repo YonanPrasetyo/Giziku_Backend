@@ -7,19 +7,28 @@ class UserRepositories {
     this._pool = new Pool();
   }
 
-  async createUser({ username, password, fullname }) {
-    const id = nanoid(16);
+  async createUser({ email, username, password }) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
 
     const query = {
-      text: 'INSERT INTO users VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
-      values: [id, username, hashedPassword, fullname, createdAt, updatedAt],
+      text: 'INSERT INTO users (username, email, password, created_at) VALUES($1, $2, $3, $4) RETURNING id',
+      values: [username, email, hashedPassword, createdAt],
     };
 
     const result = await this._pool.query(query);
     return result.rows[0];
+  }
+
+  async verifyNewEmail(email) {
+    const query = {
+      text: 'SELECT email FROM users WHERE email = $1',
+      values: [email],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows.length > 0;
   }
 
   async verifyNewUsername(username) {
