@@ -9,8 +9,18 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
+// Table user_missions {
+//   id integer [primary key]
+//   profile_id integer [not null]
+//   mission_id integer [not null]
+//   assigned_date date
+//   meal_type enum('breakfast', 'lunch', 'dinner')
+//   is_completed boolean
+//   completed_at timestamp
+// }
+
 export const up = (pgm) => {
-  pgm.createTable('foods', {
+  pgm.createTable('user_missions', {	
     id: {
       type: 'SERIAL',
       primaryKey: true,
@@ -18,13 +28,23 @@ export const up = (pgm) => {
     profile_id: {
       type: 'integer',
       notNull: true,
-      references: 'profiles',
-      onDelete: 'cascade',
     },
-    image_url: {
+    mission_id: {
+      type: 'integer',
+      notNull: true,
+    },
+    assigned_date: {
+      type: 'date',
+    },
+    meal_type: {
       type: 'varchar',
+      check: "meal_type IN ('breakfast', 'lunch', 'dinner')",
     },
-    analyzed_at: {
+    is_completed: {
+      type: 'boolean',
+      default: false,
+    },
+    completed_at: {
       type: 'timestamp',
     },
   });
@@ -36,5 +56,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('foods');
+	pgm.dropTable('user_missions');
 };

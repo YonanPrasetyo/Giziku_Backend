@@ -16,7 +16,7 @@ export const login = async (req, res, next) => {
   const accessToken = TokenManager.generateAccessToken({ id: userId });
   const refreshToken = TokenManager.generateRefreshToken({ id: userId });
 
-  await AuthenticationRepositories.addRefreshToken(refreshToken);
+  await AuthenticationRepositories.addRefreshToken(refreshToken, userId);
 
   return response(res, 201, 'Authentication berhasil ditambahkan', {
     accessToken,

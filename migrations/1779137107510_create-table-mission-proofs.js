@@ -9,36 +9,41 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
+// Table mission_proofs {
+//   id integer [primary key]
+//   user_mission_id integer [not null]
+//   image_url varchar
+//   status enum('pending', 'approved', 'rejected')
+//   feedback text
+//   submitted_at timestamp
+//   reviewed_at timestamp
+// }
+
 export const up = (pgm) => {
-  pgm.createTable('nutrition_results', {
+  pgm.createTable('mission_proofs', {
     id: {
       type: 'SERIAL',
       primaryKey: true,
-      autoIncrement: true,
     },
-    food_id: {
+    user_mission_id: {
       type: 'integer',
       notNull: true,
-      references: 'foods',
-      onDelete: 'cascade',
     },
-    name: {
+    image_url: {
       type: 'varchar',
     },
-    energy: {
-      type: 'float',
+    status: {
+      type: 'varchar',
+      check: "status IN ('pending', 'approved', 'rejected')",
     },
-    protein: {
-      type: 'float',
+    feedback: {
+      type: 'text',
     },
-    fat: {
-      type: 'float',
+    submitted_at: {
+      type: 'timestamp',
     },
-    carbohydrate: {
-      type: 'float',
-    },
-    sugar: {
-      type: 'float',
+    reviewed_at: {
+      type: 'timestamp',
     },
   });
 };
@@ -49,5 +54,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable('nutrition_results');
+  pgm.dropTable('mission_proofs');
 };

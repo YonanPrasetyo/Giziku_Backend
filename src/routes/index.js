@@ -2,13 +2,17 @@ import { Router } from 'express';
 import users from '../services/users/routes/index.js';
 import authentications from '../services/authentications/routes/index.js';
 import profiles from '../services/profiles/routes/index.js';
-import foods from '../services/foods/routes/index.js';
+import missions from '../services/missions/routes/index.js';
+import userMissions from '../services/user-missions/routes/index.js';
+import ranks from '../services/ranks/routes/index.js';
 
 const router = Router();
 
 router.use('/', users);
 router.use('/', authentications);
 router.use('/', profiles);
-router.use('/', foods);
+router.use('/', missions);
+router.use('/', userMissions);
+router.use('/', ranks);
 
 export default router;

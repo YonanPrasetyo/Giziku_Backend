@@ -13,7 +13,7 @@ const TokenManager = {
       throw new InvariantError('Refresh token tidak valid');
     }
   },
-  verify: (accessToken, secret) => {    
+  verify: (accessToken, secret) => {
     try {
       const payload = jwt.verify(accessToken, secret);
       return payload;

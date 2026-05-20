@@ -6,10 +6,10 @@ class AuthenticationRepositories {
     this._pool = new Pool();
   }
 
-  async addRefreshToken(token) {
+  async addRefreshToken(token, userId) {
     const query = {
-      text: 'INSERT INTO authentications VALUES($1)',
-      values: [token],
+      text: 'INSERT INTO authentications (user_id, token, created_at) VALUES($1, $2, $3)',
+      values: [userId, token, new Date()],
     };
 
     await this._pool.query(query);
@@ -37,21 +37,21 @@ class AuthenticationRepositories {
     return result.rows[0];
   }
 
-  async verifyUserCredential(username, password) {
+  async verifyUserCredential(email, password) {
     const query = {
-      text: 'SELECT id, password FROM users WHERE username = $1',
-      values: [username],
+      text: 'SELECT id, password FROM users WHERE email = $1',
+      values: [email],
     };
 
     const user = await this._pool.query(query);
-    if (!user) {
+    if (!user || !user.rows.length) {
       return null;
     }
 
     const { id, password: hashedPassword } = user.rows[0];
-    const isPasswordNatch = await bcrypt.compare(password, hashedPassword);
+    const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
 
-    if (!isPasswordNatch) {
+    if (!isPasswordMatch) {
       return null;
     }
     return id;

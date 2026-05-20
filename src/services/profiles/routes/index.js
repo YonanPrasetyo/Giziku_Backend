@@ -8,13 +8,14 @@ import {
 } from '../controller/profile-controller.js';
 import { validate } from '../../../middlewares/validate.js';
 import { profilePayloadSchema } from '../validator/schema.js';
+import authenticateToken from '../../../middlewares/auth.js';
 
 const router = Router();
 
-router.post('/profiles', validate(profilePayloadSchema), createProfile);
-router.get('/profiles', getProfiles);
-router.get('/profiles/:id', getProfileById);
-router.put('/profiles/:id', validate(profilePayloadSchema), updateProfileById);
-router.delete('/profiles/:id', deleteProfileById);
+router.post('/profiles', authenticateToken, validate(profilePayloadSchema), createProfile);
+router.get('/profiles', authenticateToken, getProfiles);
+router.get('/profiles/:id', authenticateToken, getProfileById);
+router.put('/profiles/:id', authenticateToken, validate(profilePayloadSchema), updateProfileById);
+router.delete('/profiles/:id', authenticateToken, deleteProfileById);
 
 export default router;
