@@ -39,7 +39,7 @@ class AuthenticationRepositories {
 
   async verifyUserCredential(email, password) {
     const query = {
-      text: 'SELECT id, password FROM users WHERE email = $1',
+      text: 'SELECT id, password, role FROM users WHERE email = $1',
       values: [email],
     };
 
@@ -48,13 +48,16 @@ class AuthenticationRepositories {
       return null;
     }
 
-    const { id, password: hashedPassword } = user.rows[0];
+    const { id, password: hashedPassword, role } = user.rows[0];
     const isPasswordMatch = await bcrypt.compare(password, hashedPassword);
 
     if (!isPasswordMatch) {
       return null;
     }
-    return id;
+    return {
+      id,
+      role
+    };
   }
 }
 

@@ -8,6 +8,8 @@ export const shorthands = undefined;
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
+
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('users', {
     id: {
@@ -23,6 +25,11 @@ export const up = (pgm) => {
       type: 'VARCHAR(100)',
       notNull: true,
       unique: true,
+    },
+    role: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      default: 'user',
     },
     password: {
       type: 'TEXT',

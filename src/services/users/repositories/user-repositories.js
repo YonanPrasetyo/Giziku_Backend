@@ -1,5 +1,4 @@
 import { Pool } from 'pg';
-import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 
 class UserRepositories {
@@ -51,7 +50,7 @@ class UserRepositories {
     const result = await this._pool.query(query);
 
     return result.rows[0];
-  }
+  } 
 }
 
 export default new UserRepositories;

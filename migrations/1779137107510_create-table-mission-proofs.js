@@ -9,16 +9,7 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
-// Table mission_proofs {
-//   id integer [primary key]
-//   user_mission_id integer [not null]
-//   image_url varchar
-//   status enum('pending', 'approved', 'rejected')
-//   feedback text
-//   submitted_at timestamp
-//   reviewed_at timestamp
-// }
-
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('mission_proofs', {
     id: {

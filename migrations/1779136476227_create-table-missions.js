@@ -9,7 +9,7 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
-
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('missions', {
     id: {

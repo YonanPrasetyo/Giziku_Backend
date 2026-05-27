@@ -9,18 +9,9 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
-// Table user_missions {
-//   id integer [primary key]
-//   profile_id integer [not null]
-//   mission_id integer [not null]
-//   assigned_date date
-//   meal_type enum('breakfast', 'lunch', 'dinner')
-//   is_completed boolean
-//   completed_at timestamp
-// }
-
+/* eslint-disable camelcase */
 export const up = (pgm) => {
-  pgm.createTable('user_missions', {	
+  pgm.createTable('user_missions', {
     id: {
       type: 'SERIAL',
       primaryKey: true,
@@ -56,5 +47,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-	pgm.dropTable('user_missions');
+  pgm.dropTable('user_missions');
 };

@@ -9,15 +9,7 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
-// Table ranks {
-//   id integer [primary key]
-//   name varchar
-//   min_xp integer
-//   max_xp integer
-//   icon_url varchar
-//   created_at timestamp
-// }
-
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('ranks', {
     id: {

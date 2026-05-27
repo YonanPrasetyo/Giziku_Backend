@@ -8,6 +8,8 @@ export const shorthands = undefined;
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
+
+/* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('profiles', {
     id: {
