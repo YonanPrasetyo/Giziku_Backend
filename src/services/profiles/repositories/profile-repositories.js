@@ -82,6 +82,16 @@ class ProfileRepositories {
 
     return result.rows[0];
   }
+
+  async getByUserId(userId) {
+    const query = {
+      text: 'SELECT * FROM profiles WHERE user_id = $1',
+      values: [userId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows;
+  }
 }
 
 export default new ProfileRepositories();

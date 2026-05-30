@@ -1,21 +1,17 @@
 import { Router } from 'express';
 import {
-  createUserMission,
-  getUserMissions,
-  getUserMissionById,
-  updateUserMissionById,
-  deleteUserMissionById,
+  getProfileMissionsBatch,
+  getUserMissionBatch,
+  completeMissionBatch
 } from '../controller/user-mission-controller.js';
-import { validate } from '../../../middlewares/validate.js';
-import { userMissionPayloadSchema } from '../validator/schema.js';
 import authenticateToken from '../../../middlewares/auth.js';
+import authorizeRoles from '../../../middlewares/authorize.js';
+import { upload } from '../../../middlewares/upload.js';
 
 const router = Router();
 
-router.post('/user-missions', authenticateToken, validate(userMissionPayloadSchema), createUserMission);
-router.get('/user-missions', authenticateToken, getUserMissions);
-router.get('/user-missions/:id', authenticateToken, getUserMissionById);
-router.put('/user-missions/:id', authenticateToken, validate(userMissionPayloadSchema), updateUserMissionById);
-router.delete('/user-missions/:id', authenticateToken, deleteUserMissionById);
+router.get('/user-missions', authenticateToken, authorizeRoles('user'), getUserMissionBatch);
+router.get('/user-missions/profiles/:profileId', authenticateToken, authorizeRoles('user'), getProfileMissionsBatch);
+router.post('/user-missions/profiles/complete/:profileId', authenticateToken, authorizeRoles('user'), upload.single('file'), completeMissionBatch);
 
 export default router;

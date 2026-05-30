@@ -5,62 +5,131 @@ class UserMissionRepositories {
     this._pool = new Pool();
   }
 
-  async createUserMission({ profileId, missionId, assignedDate, mealType }) {
+  async getUserMissionById(id) {
     const query = {
       text: `
-        INSERT INTO user_missions (profile_id, mission_id, assigned_date, meal_type)
-        VALUES($1, $2, $3, $4)
-        RETURNING *
+        SELECT 
+          um.id,
+          um.profile_id,
+          um.mission_id,
+          um.assigned_date,
+          um.meal_type,
+          um.is_completed,
+          m.title,
+          m.description,
+          m.xp
+        FROM user_missions um
+        JOIN missions m ON m.id = um.mission_id
+        WHERE um.id = $1
       `,
-      values: [profileId, missionId, assignedDate || null, mealType || null],
+      values: [id],
     };
 
     const result = await this._pool.query(query);
     return result.rows[0];
   }
 
-  async getAllUserMissions() {
-    const query = { text: 'SELECT * FROM user_missions ORDER BY id ASC' };
+  async getUserMissionsToday(profileId, mealType) {
+    const query = {
+      text: `
+        SELECT 
+          um.id,
+          m.title,
+          m.description,
+          m.xp,
+          um.is_completed
+        FROM user_missions um
+        JOIN missions m ON m.id = um.mission_id
+        WHERE um.profile_id = $1
+          AND um.assigned_date = CURRENT_DATE
+          AND um.meal_type = $2
+      `,
+      values: [profileId, mealType],
+    };
+
     const result = await this._pool.query(query);
     return result.rows;
   }
 
-  async getUserMissionById(id) {
-    const query = { text: 'SELECT * FROM user_missions WHERE id = $1', values: [id] };
+  async getRandomMissions(limit = 3) {
+    const query = {
+      text: `
+        SELECT id, title, description, xp
+        FROM missions
+        ORDER BY RANDOM()
+        LIMIT $1
+      `,
+      values: [limit],
+    };
+
     const result = await this._pool.query(query);
-    return result.rows[0];
+    return result.rows;
   }
 
-  async updateUserMissionById(id, { profileId, missionId, assignedDate, mealType, isCompleted }) {
-    const completedAt = isCompleted ? new Date().toISOString() : null;
+  async insertUserMissions(profileId, missions, mealType) {
+    const assignedDate = new Date().toLocaleDateString('en-CA');
+
+    const values = missions.map((m) => [
+      profileId,
+      m.id,
+      assignedDate,
+      mealType,
+      false,
+      null,
+    ]);
+
+    const placeholders = values
+      .map(
+        (_, i) =>
+          `($${i * 6 + 1}, $${i * 6 + 2}, $${i * 6 + 3}, $${i * 6 + 4}, $${i * 6 + 5}, $${i * 6 + 6})`
+      )
+      .join(', ');
+
+    const query = {
+      text: `
+        INSERT INTO user_missions
+        (profile_id, mission_id, assigned_date, meal_type, is_completed, completed_at)
+        VALUES ${placeholders}
+        RETURNING *
+      `,
+      values: values.flat(),
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows;
+  }
+
+  async completeMission(profileId, missionId) {
+    const completedAt = new Date().toISOString();
 
     const query = {
       text: `
         UPDATE user_missions
-        SET
-          profile_id = $1,
-          mission_id = $2,
-          assigned_date = $3,
-          meal_type = $4,
-          is_completed = $5,
-          completed_at = $6
-        WHERE id = $7
+        SET is_completed = true, completed_at = $1
+        WHERE profile_id = $2 AND mission_id = $3 AND assigned_date = CURRENT_DATE
         RETURNING *
       `,
-      values: [profileId, missionId, assignedDate || null, mealType || null, isCompleted ?? false, completedAt, id],
+      values: [completedAt, profileId, missionId],
     };
 
     const result = await this._pool.query(query);
-
-    if (!result.rows.length) return null;
     return result.rows[0];
   }
 
-  async deleteUserMissionById(id) {
-    const query = { text: 'DELETE FROM user_missions WHERE id = $1 RETURNING *', values: [id] };
-    const result = await this._pool.query(query);
+  async submitMissionProof(userMissionId, imageUrl, status) {
+    const submittedAt = new Date().toISOString();
 
-    if (!result.rows.length) return null;
+    const query = {
+      text: `
+        INSERT INTO mission_proofs
+        (user_mission_id, image_url, status, submitted_at)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+      `,
+      values: [userMissionId, imageUrl, status, submittedAt],
+    };
+
+    const result = await this._pool.query(query);
     return result.rows[0];
   }
 }

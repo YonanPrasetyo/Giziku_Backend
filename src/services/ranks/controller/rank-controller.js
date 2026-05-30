@@ -4,7 +4,17 @@ import InvariantError from '../../../exceptions/invariant-error.js';
 import NotFoundError from '../../../exceptions/not-found-error.js';
 
 export const createRank = async (req, res, next) => {
-  const { name, minXp, maxXp, iconUrl } = req.validated;
+  const { name, minXp, maxXp } = req.validated;
+
+  if (minXp >= maxXp) {
+    return next(new InvariantError('minXp harus lebih kecil dari maxXp'));
+  }
+
+  if (!req.file) {
+    return next(new InvariantError('Icon rank harus diunggah'));
+  }
+
+  const iconUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
   const rank = await RankRepositories.createRank({ name, minXp, maxXp, iconUrl });
 
@@ -29,7 +39,20 @@ export const getRankById = async (req, res, next) => {
 
 export const updateRankById = async (req, res, next) => {
   const { id } = req.params;
-  const { name, minXp, maxXp, iconUrl } = req.validated;
+  const { name, minXp, maxXp } = req.validated;
+
+  if (minXp >= maxXp) {
+    return next(new InvariantError('minXp harus lebih kecil dari maxXp'));
+  }
+
+  let iconUrl;
+  if (req.file) {
+    iconUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  } else {
+    const existingRank = await RankRepositories.getRankById(id);
+    if (!existingRank) return next(new NotFoundError('Rank tidak ditemukan'));
+    iconUrl = existingRank.icon_url;
+  }
 
   const rank = await RankRepositories.updateRankById(id, { name, minXp, maxXp, iconUrl });
 
