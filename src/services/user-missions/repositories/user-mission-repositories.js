@@ -99,17 +99,17 @@ class UserMissionRepositories {
     return result.rows;
   }
 
-  async completeMission(profileId, missionId) {
+  async completeMission(missionId) {
     const completedAt = new Date().toISOString();
 
     const query = {
       text: `
         UPDATE user_missions
         SET is_completed = true, completed_at = $1
-        WHERE profile_id = $2 AND mission_id = $3 AND assigned_date = CURRENT_DATE
+        WHERE id = $2
         RETURNING *
       `,
-      values: [completedAt, profileId, missionId],
+      values: [completedAt, missionId],
     };
 
     const result = await this._pool.query(query);
@@ -131,6 +131,21 @@ class UserMissionRepositories {
 
     const result = await this._pool.query(query);
     return result.rows[0];
+  }
+
+  async awardXp(profileId, xp) {
+    const query = {
+      text: `
+        UPDATE users
+        SET xp = xp + $1
+        WHERE id = $2
+        RETURNING xp
+      `,
+      values: [xp, profileId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows[0].xp;
   }
 }
 

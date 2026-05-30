@@ -24,7 +24,8 @@ export const createProfile = async (req, res, next) => {
 };
 
 export const getProfiles = async (req, res, next) => {
-  const profiles = await ProfileRepositories.getAllProfiles();
+  const userId = req.user.id;
+  const profiles = await ProfileRepositories.getAllProfiles(userId);
   return response(res, 200, 'Profiles berhasil ditampilkan', profiles);
 };
 

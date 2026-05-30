@@ -61,6 +61,17 @@ class RankRepositories {
     if (!result.rows.length) return null;
     return result.rows[0];
   }
+
+  async getRankByXp(xp) {
+    const query = {
+      text: 'SELECT * FROM ranks WHERE min_xp <= $1 AND max_xp >= $1 LIMIT 1',
+      values: [xp],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows[0];
+  }
 }
+
 
 export default new RankRepositories();

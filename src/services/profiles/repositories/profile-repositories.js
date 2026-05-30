@@ -22,9 +22,10 @@ class ProfileRepositories {
     return result.rows[0];
   }
 
-  async getAllProfiles() {
+  async getAllProfiles(userId) {
     const query = {
-      text: 'SELECT * FROM profiles ORDER BY id ASC',
+      text: 'SELECT * FROM profiles WHERE user_id = $1 ORDER BY id ASC',
+      values: [userId],
     };
 
     const result = await this._pool.query(query);

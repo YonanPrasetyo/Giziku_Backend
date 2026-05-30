@@ -1,4 +1,5 @@
 import RankRepositories from '../repositories/rank-repositories.js';
+import UserRepositories from '../../users/repositories/user-repositories.js';
 import response from '../../../utils/response.js';
 import InvariantError from '../../../exceptions/invariant-error.js';
 import NotFoundError from '../../../exceptions/not-found-error.js';
@@ -68,4 +69,22 @@ export const deleteRankById = async (req, res, next) => {
   if (!rank) return next(new NotFoundError('Rank tidak ditemukan'));
 
   return response(res, 200, 'Rank berhasil dihapus', rank);
+};
+
+export const getRankByXp = async (req, res, next) => {
+  const userId = req.user.id;
+
+  // ambil dari tabel user dari repository jangan manggil api pangil repository saja
+  const { xp } = await UserRepositories.getUserById(userId);
+  if (isNaN(xp)) {
+    return next(new InvariantError('XP harus berupa angka'));
+  }
+
+  const rank = await RankRepositories.getRankByXp(xp);
+
+  if (!rank) {
+    return next(new NotFoundError('Rank tidak ditemukan untuk XP yang diberikan'));
+  }
+
+  return response(res, 200, 'Rank berhasil ditampilkan', rank);
 };

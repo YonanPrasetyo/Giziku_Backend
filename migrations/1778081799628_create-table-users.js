@@ -31,6 +31,11 @@ export const up = (pgm) => {
       notNull: true,
       default: 'user',
     },
+    xp: {
+      type: 'INTEGER',
+      notNull: true,
+      default: 0,
+    },
     password: {
       type: 'TEXT',
       notNull: true,
