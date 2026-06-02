@@ -26,6 +26,18 @@ export const createProfile = async (req, res, next) => {
 export const getProfiles = async (req, res, next) => {
   const userId = req.user.id;
   const profiles = await ProfileRepositories.getAllProfiles(userId);
+
+  profiles.forEach((profile) => {
+    const dateOfBirth = new Date(profile.date_of_birth);
+    const resultDate = new Date();
+    const age = resultDate.getFullYear() - dateOfBirth.getFullYear();
+    profile.age = age;
+  });
+
+  if (!profiles) {
+    return next(new NotFoundError('Profiles tidak ditemukan'));
+  }
+
   return response(res, 200, 'Profiles berhasil ditampilkan', profiles);
 };
 
