@@ -5,16 +5,16 @@ class MissionRepositories {
     this._pool = new Pool();
   }
 
-  async createMission({ title, description, xp }) {
+  async createMission({ foodId, description, xp }) {
     const createdAt = new Date().toISOString();
 
     const query = {
       text: `
-        INSERT INTO missions (title, description, xp, created_at)
+        INSERT INTO missions (food_id, description, xp, created_at)
         VALUES($1, $2, $3, $4)
         RETURNING *
       `,
-      values: [title, description, xp, createdAt],
+      values: [foodId, description, xp, createdAt],
     };
 
     const result = await this._pool.query(query);
@@ -22,29 +22,56 @@ class MissionRepositories {
   }
 
   async getAllMissions() {
-    const query = { text: 'SELECT * FROM missions ORDER BY id ASC' };
+    const query = {
+      text: `
+        SELECT
+          m.id,
+          m.food_id,
+          f.name AS title,
+          m.description,
+          m.xp,
+          m.created_at
+        FROM missions m
+        JOIN foods f ON f.id = m.food_id
+        ORDER BY m.id ASC
+      `,
+    };
     const result = await this._pool.query(query);
     return result.rows;
   }
 
   async getMissionById(id) {
-    const query = { text: 'SELECT * FROM missions WHERE id = $1', values: [id] };
+    const query = {
+      text: `
+        SELECT
+          m.id,
+          m.food_id,
+          f.name AS title,
+          m.description,
+          m.xp,
+          m.created_at
+        FROM missions m
+        JOIN foods f ON f.id = m.food_id
+        WHERE m.id = $1
+      `,
+      values: [id],
+    };
     const result = await this._pool.query(query);
     return result.rows[0];
   }
 
-  async updateMissionById(id, { title, description, xp }) {
+  async updateMissionById(id, { foodId, description, xp }) {
     const query = {
       text: `
         UPDATE missions
         SET
-          title = $1,
+          food_id = $1,
           description = $2,
           xp = $3
         WHERE id = $4
         RETURNING *
       `,
-      values: [title, description, xp, id],
+      values: [foodId, description, xp, id],
     };
 
     const result = await this._pool.query(query);

@@ -15,11 +15,12 @@ class UserMissionRepositories {
           um.assigned_date,
           um.meal_type,
           um.is_completed,
-          m.title,
+          f.name AS title,
           m.description,
           m.xp
         FROM user_missions um
         JOIN missions m ON m.id = um.mission_id
+        JOIN foods f ON f.id = m.food_id
         WHERE um.id = $1
       `,
       values: [id],
@@ -34,12 +35,13 @@ class UserMissionRepositories {
       text: `
         SELECT 
           um.id,
-          m.title,
+          f.name AS title,
           m.description,
           m.xp,
           um.is_completed
         FROM user_missions um
         JOIN missions m ON m.id = um.mission_id
+        JOIN foods f ON f.id = m.food_id
         WHERE um.profile_id = $1
           AND um.assigned_date = CURRENT_DATE
           AND um.meal_type = $2
@@ -54,12 +56,31 @@ class UserMissionRepositories {
   async getRandomMissions(limit = 3) {
     const query = {
       text: `
-        SELECT id, title, description, xp
-        FROM missions
+        SELECT m.id, f.name AS title, m.description, m.xp
+        FROM missions m
+        JOIN foods f ON f.id = m.food_id
         ORDER BY RANDOM()
         LIMIT $1
       `,
       values: [limit],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows;
+  }
+
+  async getPendingMissionsByProfileIdAndFoodId(profileId, foodId) {
+    const query = {
+      text: `
+        SELECT um.id, m.xp, m.description
+        FROM user_missions um
+        JOIN missions m ON m.id = um.mission_id
+        WHERE um.profile_id = $1
+          AND m.food_id = $2
+          AND um.assigned_date = CURRENT_DATE
+          AND um.is_completed = false
+      `,
+      values: [profileId, foodId],
     };
 
     const result = await this._pool.query(query);

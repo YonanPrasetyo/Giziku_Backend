@@ -63,7 +63,7 @@ class ProfileRepositories {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      return null; // pengganti P2025
+      return null;
     }
 
     return result.rows[0];

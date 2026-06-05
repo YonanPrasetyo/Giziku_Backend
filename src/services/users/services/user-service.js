@@ -1,6 +1,5 @@
 import { Pool } from 'pg';
 import UserRepositories from '../repositories/user-repositories.js';
-import ProfileRepositories from '../../profiles/repositories/profile-repositories.js';
 import InvariantError from '../../../exceptions/invariant-error.js';
 
 
@@ -30,13 +29,7 @@ class UserService {
       throw new InvariantError('User gagal ditambahkan');
     }
 
-    const profile = await ProfileRepositories.createProfile({
-      userId: user.id,
-      name: username,
-      relation: 'self',
-    });
-
-    return { user, profile };
+    return { user };
   }
 }
 

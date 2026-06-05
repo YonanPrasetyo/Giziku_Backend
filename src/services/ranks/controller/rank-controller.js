@@ -74,7 +74,6 @@ export const deleteRankById = async (req, res, next) => {
 export const getRankByXp = async (req, res, next) => {
   const userId = req.user.id;
 
-  // ambil dari tabel user dari repository jangan manggil api pangil repository saja
   const { xp } = await UserRepositories.getUserById(userId);
   if (isNaN(xp)) {
     return next(new InvariantError('XP harus berupa angka'));
@@ -86,5 +85,8 @@ export const getRankByXp = async (req, res, next) => {
     return next(new NotFoundError('Rank tidak ditemukan untuk XP yang diberikan'));
   }
 
-  return response(res, 200, 'Rank berhasil ditampilkan', rank);
+  return response(res, 200, 'Rank berhasil ditampilkan', {
+    xp,
+    rank,
+  });
 };

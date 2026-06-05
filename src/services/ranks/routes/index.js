@@ -21,6 +21,6 @@ router.get('/ranks/:id', authenticateToken, authorizeRoles('admin'), getRankById
 router.put('/ranks/:id', authenticateToken, authorizeRoles('admin'), upload.single('icon'), validate(rankPayloadSchema), updateRankById);
 router.delete('/ranks/:id', authenticateToken, authorizeRoles('admin'), deleteRankById);
 
-router.get('/rank/xp', authenticateToken, getRankByXp);
+router.get('/rank/xp', authenticateToken, authorizeRoles('user'), getRankByXp);
 
 export default router;

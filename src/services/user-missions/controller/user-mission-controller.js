@@ -142,9 +142,6 @@ export const completeMissionBatch = async (req, res, next) => {
         return next(new NotFoundError(`Misi dengan ID ${missionId} tidak ditemukan untuk profile ini`));
       }
 
-
-      // INI NANTI DIGANTI DENGAN RESPONSE DARI MODEL AI YANG MENGANALISIS BUKTI PENYELESAIAN MISSION
-      // NANTI NGIRIM REQUEST KE MODEL AI MUNGKIN AKAN DI SINI
       const randomStatus = Math.random() < 0.2 ? 'rejected' : 'approved';
 
       if (randomStatus === 'approved') {

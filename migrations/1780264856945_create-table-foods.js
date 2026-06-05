@@ -9,7 +9,6 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 
-// Nama,Kategori,Takaran Porsi,Kalori (kal),Protein (g),Karbohidrat (g),Lemak (g),Gula (g)
 /* eslint-disable camelcase */
 export const up = (pgm) => {
   pgm.createTable('foods', {

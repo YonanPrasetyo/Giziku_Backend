@@ -4,16 +4,17 @@ import InvariantError from '../../../exceptions/invariant-error.js';
 import NotFoundError from '../../../exceptions/not-found-error.js';
 
 export const createMission = async (req, res, next) => {
-  const { title, description, xp } = req.validated;
+  const foodId = req.validated.food_id;
+  const { description, xp } = req.validated;
 
-  const mission = await MissionRepositories.createMission({ title, description, xp });
+  const mission = await MissionRepositories.createMission({ foodId, description, xp });
 
   if (!mission) return next(new InvariantError('Mission gagal ditambahkan'));
 
   return response(res, 201, 'Mission berhasil ditambahkan', mission);
 };
 
-export const getMissions = async (req, res, next) => {
+export const getMissions = async (req, res) => {
   const missions = await MissionRepositories.getAllMissions();
   return response(res, 200, 'Missions berhasil ditampilkan', missions);
 };
@@ -29,9 +30,10 @@ export const getMissionById = async (req, res, next) => {
 
 export const updateMissionById = async (req, res, next) => {
   const { id } = req.params;
-  const { title, description, xp } = req.validated;
+  const foodId = req.validated.food_id;
+  const { description, xp } = req.validated;
 
-  const mission = await MissionRepositories.updateMissionById(id, { title, description, xp });
+  const mission = await MissionRepositories.updateMissionById(id, { foodId, description, xp });
 
   if (!mission) return next(new NotFoundError('Mission tidak ditemukan'));
 
